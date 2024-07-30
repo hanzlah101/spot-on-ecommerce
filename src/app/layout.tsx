@@ -7,7 +7,7 @@ import { QueryProvider } from "@/providers/query-provider"
 import { ThemeProvider } from "@/providers/theme-provider"
 import { Toaster } from "@/components/ui/sonner"
 import { ConfirmModal } from "@/components/confirm-modal"
-import { UpdateUserModal } from "./(store)/_components/store-navbar/update-user-modal"
+import { UpdateUserModal } from "./(main)/_components/store-navbar/update-user-modal"
 import { getSession } from "@/utils/auth"
 
 const font = Quicksand({ subsets: ["latin"] })

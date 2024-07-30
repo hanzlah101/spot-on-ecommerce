@@ -3,7 +3,7 @@ import { Suspense } from "react"
 import { getFeaturedProducts } from "@/queries/product"
 import { HeroSection } from "./_components/store-hero"
 import { FeaturedProducts } from "./_components/featured-products"
-import { DesktopCategoriesMenu } from "./_components/store-navbar/categories-menu"
+import { DesktopCategoriesMenu } from "../_components/store-navbar/categories-menu"
 import { getCategories, getSubcategories } from "@/queries/category"
 import { ProductReelSkeleton } from "./_components/product-reel"
 

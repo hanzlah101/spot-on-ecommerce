@@ -3,12 +3,11 @@ import { type ReactNode, Suspense } from "react"
 import { StoreNavbar } from "./_components/store-navbar"
 import { StoreFooter } from "./_components/store-footer"
 import { CartModal } from "./_components/cart-modal"
-import { TrackOrderModal } from "./_components/track-order-modal"
+import { TrackOrderModal } from "./(store)/_components/track-order-modal"
 
 export default function StoreLayout({ children }: { children: ReactNode }) {
   return (
     <>
-      <TrackOrderModal />
       <Suspense>
         <main className="flex min-h-screen flex-col">
           <StoreNavbar />
@@ -16,9 +15,10 @@ export default function StoreLayout({ children }: { children: ReactNode }) {
             {children}
           </div>
         </main>
-        <StoreFooter />
-        <CartModal />
       </Suspense>
+      <StoreFooter />
+      <TrackOrderModal />
+      <CartModal />
     </>
   )
 }

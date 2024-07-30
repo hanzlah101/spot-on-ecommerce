@@ -18,7 +18,7 @@ export default async function VerifyEmailPage() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-sm space-y-5 px-4 py-32">
+    <div className="mx-auto w-full max-w-sm space-y-5">
       <div className="space-y-2">
         <h1 className="text-2xl font-semibold sm:text-3xl">Verify Email</h1>
         <p className="text-muted-foreground">

@@ -4,7 +4,7 @@ import { VerifyEmailForm } from "../../_components/reset-password/verify-email-f
 
 export default function SendResetPasswordTokenPage() {
   return (
-    <div className="mx-auto w-full max-w-md space-y-5 px-4 py-8">
+    <>
       <div className="space-y-2">
         <h1 className="text-2xl font-semibold sm:text-3xl">Reset Password</h1>
         <p className="text-muted-foreground">
@@ -21,6 +21,6 @@ export default function SendResetPasswordTokenPage() {
           Login
         </Link>
       </p>
-    </div>
+    </>
   )
 }

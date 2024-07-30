@@ -22,7 +22,7 @@ export default async function SignUpPage() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-md space-y-5 px-4 py-8">
+    <>
       <div className="space-y-2">
         <h1 className="text-2xl font-semibold sm:text-3xl">Sign Up</h1>
         <p className="text-muted-foreground">
@@ -40,6 +40,6 @@ export default async function SignUpPage() {
           Login
         </Link>
       </p>
-    </div>
+    </>
   )
 }

@@ -9,11 +9,11 @@ import { ArrowRight } from "lucide-react"
 import { cn, formatPrice, getProductPrice } from "@/utils"
 import { Button } from "@/components/ui/button"
 import { useCartModal } from "@/stores/use-cart-modal"
-import { CartItem } from "./cart-item"
 import { useCartStore } from "@/stores/use-cart-store"
 import { getCartProducts } from "@/queries/product"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
+import { CartItem } from "../(store)/_components/cart-item"
 import { EmptyCartIcon } from "@/components/icons/empty-cart"
 import {
   Sheet,
