@@ -123,7 +123,7 @@ export function SalesChart({
       </CardHeader>
 
       <CardContent>
-        <ChartContainer config={chartConfig} className="max-h-[500px] w-full">
+        <ChartContainer config={chartConfig}>
           <AreaChart
             accessibilityLayer
             data={chartData}

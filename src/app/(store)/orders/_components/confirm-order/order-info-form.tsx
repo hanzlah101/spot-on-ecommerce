@@ -34,7 +34,6 @@ import { SITE_URL, STATES } from "@/utils/constants"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { RadioGroup, RadioGroupCardItem } from "@/components/ui/radio-group"
-import { useCartStore } from "@/stores/use-cart-store"
 import { useUpdateOrderInfoModal } from "@/stores/use-update-order-info-modal"
 import {
   Form,
@@ -84,11 +83,12 @@ function DetailsForm({
   items,
   total,
 }: OrderInfoFormProps) {
-  const { removeAllProducts } = useCartStore()
-
   const searchParams = useSearchParams()
 
-  const mode = useMemo(() => searchParams.get("mode") ?? "cart", [searchParams])
+  const mode = useMemo(
+    () => (searchParams.get("mode") ?? "cart") as "buy-now" | "cart",
+    [searchParams],
+  )
 
   const { onOpenChange } = useUpdateOrderInfoModal()
   const { trackingId }: { trackingId: string } = useParams()
@@ -122,7 +122,7 @@ function DetailsForm({
 
   const { mutate: confirmOrder, isPending: isCreating } = useMutation({
     mutationFn: async (values: CreateOrderSchema) => {
-      if (paymentMethod === "credit card") {
+      if (values.paymentMethod === "credit card") {
         if (!elements || !stripe) return
 
         const formSubmit = await elements.submit()
@@ -132,11 +132,12 @@ function DetailsForm({
             message: "Error processing payment",
             type: "validate",
           })
+
           throw formSubmit.error
         }
       }
 
-      const res = await createOrder(values)
+      const res = await createOrder(values, mode)
 
       if (res?.error) {
         form.setError("root", { message: res.error })
@@ -148,7 +149,7 @@ function DetailsForm({
           elements,
           clientSecret: res.clientSecret,
           confirmParams: {
-            return_url: `${SITE_URL}/orders/${res.trackingId}?success=1`,
+            return_url: `${SITE_URL}/orders/${res.trackingId}?success=1&mode=${mode}`,
           },
         })
 
@@ -164,12 +165,6 @@ function DetailsForm({
 
           throw payment.error
         }
-      }
-    },
-    onSuccess() {
-      // TODO
-      if (mode === "cart") {
-        setTimeout(() => removeAllProducts(), 500)
       }
     },
   })

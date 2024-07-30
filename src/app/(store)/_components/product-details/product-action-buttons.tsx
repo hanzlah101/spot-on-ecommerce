@@ -143,6 +143,7 @@ export function ProductActionButtons({
           </button>
         </div>
       </div>
+
       <div className="mt-4">
         <ShakeAnimation disabled={stock === 0}>
           <Button

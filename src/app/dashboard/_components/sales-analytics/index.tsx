@@ -17,6 +17,7 @@ import type { getDashboardAnalytics } from "@/queries/order"
 import { NumberTicker } from "@/components/animations/number-ticker"
 import { SalesChart } from "./sales-chart"
 import { OrdersChart } from "./orders-chart"
+import { Skeleton } from "@/components/ui/skeleton"
 
 type SalesAnalyticsProps = {
   analyticsPromise: ReturnType<typeof getDashboardAnalytics>
@@ -125,6 +126,31 @@ export function SalesAnalytics({ analyticsPromise }: SalesAnalyticsProps) {
           thisYearSalesByMonth={thisYearSalesByMonth}
         />
         <OrdersChart totalRevenue={totalRevenue} totalOrders={totalOrders} />
+      </div>
+    </div>
+  )
+}
+
+export function SalesAnalyticsSkeleton() {
+  return (
+    <div className="w-full space-y-6">
+      <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
+        {Array.from({ length: 4 }).map((_, index) => (
+          <Card key={index}>
+            <CardHeader className="mb-0">
+              <Skeleton className="h-4 w-2/4 rounded" />
+            </CardHeader>
+            <CardContent>
+              <Skeleton className="h-6 w-2/3 rounded" />
+              <Skeleton className="mt-2 h-3 w-2/3 rounded" />
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      <div className="grid gap-5 lg:grid-cols-[70%_30%]">
+        <Skeleton className="h-[500px] w-full" />
+        <Skeleton className="h-[300px] w-full" />
       </div>
     </div>
   )

@@ -38,7 +38,7 @@ export function ProductReel({ product }: ProductReelProps) {
         >
           <div className="flex items-center gap-3">
             <div className="rounded-sm bg-yellow-500 px-2 py-0.5 text-sm text-white">
-              {product.rating ?? 0}
+              {product.rating.toFixed(1) ?? 0}
             </div>
             <RatingStarsPreview
               rating={product.rating}

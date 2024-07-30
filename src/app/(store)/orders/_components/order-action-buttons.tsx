@@ -13,6 +13,8 @@ import { Button } from "@/components/ui/button"
 import { OrderInfoForm } from "./confirm-order/order-info-form"
 import { useConfirmModal } from "@/stores/use-confirm-modal"
 import { useUpdateOrderInfoModal } from "@/stores/use-update-order-info-modal"
+import { triggerConfetti } from "@/utils/confetti"
+import { useCartStore } from "@/stores/use-cart-store"
 import {
   Modal,
   ModalBody,
@@ -30,7 +32,6 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
-import { triggerConfetti } from "@/utils/confetti"
 
 type OrderActionButtonsProps = {
   order: Order
@@ -39,11 +40,13 @@ type OrderActionButtonsProps = {
 export function OrderActionButtons({ order }: OrderActionButtonsProps) {
   const { isOpen, onOpenChange } = useUpdateOrderInfoModal()
   const { onOpen } = useConfirmModal()
+  const { removeAllProducts } = useCartStore()
 
   const { trackingId }: { trackingId: string } = useParams()
 
   const searchParams = useSearchParams()
   const success = searchParams.get("success")
+  const mode = searchParams.get("mode")
 
   const { modifyUrl } = useModifiedUrl()
   const router = useRouter()
@@ -58,13 +61,17 @@ export function OrderActionButtons({ order }: OrderActionButtonsProps) {
   const canUnHold = order.status === "on hold"
 
   useEffect(() => {
+    if (mode === "cart") {
+      removeAllProducts()
+    }
+
     if (success === "1") {
       triggerConfetti()
       toast.success("Order placed successfully", { id: "order-success" })
-      const url = modifyUrl({ ["success"]: null })
+      const url = modifyUrl({ ["success"]: null, ["mode"]: null })
       router.push(url, { scroll: false })
     }
-  }, [success, router, modifyUrl])
+  }, [success, router, modifyUrl, mode, removeAllProducts])
 
   if (order.status === "cancelled" || order.status === "delivered") {
     return null

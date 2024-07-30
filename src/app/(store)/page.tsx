@@ -18,6 +18,7 @@ export default function HomePage() {
         categoriesPromise={categoriesPromise}
         subcategoriesPromise={subcategoriesPromise}
       />
+
       <HeroSection />
       <div className="mt-12 w-full">
         <h1 className="text-2xl font-semibold sm:text-3xl">

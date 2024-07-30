@@ -1,6 +1,11 @@
-import { getDashboardAnalytics } from "@/queries/order"
-import { SalesAnalytics } from "./_components/sales-analytics"
+import { Suspense } from "react"
+
 import { verifyAdmin } from "@/utils/auth"
+import { getDashboardAnalytics } from "@/queries/order"
+import {
+  SalesAnalytics,
+  SalesAnalyticsSkeleton,
+} from "./_components/sales-analytics"
 
 export default async function page() {
   const analyticsPromise = getDashboardAnalytics()
@@ -17,7 +22,9 @@ export default async function page() {
           As the store {user.role}, you&apos;ll manage daily operations.
         </p>
       </div>
-      <SalesAnalytics analyticsPromise={analyticsPromise} />
+      <Suspense fallback={<SalesAnalyticsSkeleton />}>
+        <SalesAnalytics analyticsPromise={analyticsPromise} />
+      </Suspense>
     </div>
   )
 }

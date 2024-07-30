@@ -47,7 +47,7 @@ function generateOrderTrackingId() {
   return generateRandomString(12, alphabet("0-9"))
 }
 
-export async function createOrder(_data: unknown) {
+export async function createOrder(_data: unknown, mode: "cart" | "buy-now") {
   const trackingId = generateOrderTrackingId()
   const { error, data } = createOrderSchema.safeParse(_data)
 
@@ -294,7 +294,7 @@ export async function createOrder(_data: unknown) {
   }
 
   if (data.paymentMethod === "cash on delivery") {
-    redirect(`/orders/${trackingId}?success=1`)
+    redirect(`/orders/${trackingId}?success=1&mode=${mode}`)
   }
 }
 

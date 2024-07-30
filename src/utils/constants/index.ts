@@ -15,7 +15,6 @@ export const REDIRECTS = {
 } as const
 
 export const DEFAULT_SHIPPING_PRICE = 200
-export const EXPRESS_SHIPPING_PRICE = 200
 export const DEFAULT_DELIVERY_TIME = new Date(
   Date.now() + 5 * 24 * 60 * 60 * 1000,
 )

@@ -83,7 +83,7 @@ export function ProductReviews({
                   className="hidden md:flex"
                 />
                 <p className="text-sm text-muted-foreground md:hidden">
-                  ({r.rating})
+                  ({r.rating.toFixed(1)})
                 </p>
                 <Progress
                   value={r.count}

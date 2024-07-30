@@ -1,6 +1,8 @@
+import { Suspense } from "react"
 import { notFound } from "next/navigation"
 
 import { getSession } from "@/utils/auth"
+import { Skeleton } from "@/components/ui/skeleton"
 import { getProductById, isFavouriteProduct } from "@/queries/product"
 import { canReviewProduct, getProductReviews } from "@/queries/review"
 
@@ -35,12 +37,14 @@ export default async function SingleProductPage({
   return (
     <div className="space-y-8">
       <ProductDetails data={data} isFavourite={isFavourite} />
-      <ProductReviews
-        productRating={data.product.rating}
-        reviewsPromise={reviewsPromise}
-        canReviewPromise={canReviewPromise}
-        userId={user?.id}
-      />
+      <Suspense fallback={<Skeleton className="h-[600px] w-full" />}>
+        <ProductReviews
+          productRating={data.product.rating}
+          reviewsPromise={reviewsPromise}
+          canReviewPromise={canReviewPromise}
+          userId={user?.id}
+        />
+      </Suspense>
       <ProductDescription description={data.product.longDescription} />
     </div>
   )
