@@ -9,13 +9,13 @@ export default function StoreLayout({ children }: { children: ReactNode }) {
   return (
     <>
       <Suspense>
-        <main className="flex min-h-screen flex-col">
-          <StoreNavbar />
-          <div className="flex h-full flex-1 flex-col px-4 md:px-10">
-            {children}
-          </div>
-        </main>
+        <StoreNavbar />
       </Suspense>
+      <main className="flex min-h-screen flex-col">
+        <div className="flex h-full flex-1 flex-col px-4 md:px-10">
+          {children}
+        </div>
+      </main>
       <StoreFooter />
       <TrackOrderModal />
       <CartModal />
