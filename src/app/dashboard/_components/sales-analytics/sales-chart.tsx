@@ -114,7 +114,9 @@ export function SalesChart({
                   {chartConfig[chart]?.label}
                 </span>
                 <span className="text-lg font-bold leading-none sm:text-3xl">
-                  {total[key as keyof typeof total].toFixed(0).toLocaleString()}
+                  {Intl.NumberFormat("en-US").format(
+                    Number(total[key as keyof typeof total].toFixed(0)),
+                  )}
                 </span>
               </button>
             )

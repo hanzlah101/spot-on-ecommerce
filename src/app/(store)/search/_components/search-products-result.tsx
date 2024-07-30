@@ -135,7 +135,7 @@ export function SearchProductsResult({
             <PaginationItem>
               <PaginationPrevious
                 disabled={currentPage === 1}
-                pageParam={{ ["review_page"]: currentPage - 1 }}
+                pageParam={{ ["page"]: currentPage - 1 }}
               />
             </PaginationItem>
 
@@ -146,7 +146,7 @@ export function SearchProductsResult({
                 ) : (
                   <PaginationLink
                     isActive={page === currentPage}
-                    pageParam={{ ["review_page"]: page }}
+                    pageParam={{ ["page"]: page }}
                   >
                     {page}
                   </PaginationLink>
@@ -157,7 +157,7 @@ export function SearchProductsResult({
             <PaginationItem>
               <PaginationNext
                 disabled={currentPage === pageCount}
-                pageParam={{ ["review_page"]: currentPage + 1 }}
+                pageParam={{ ["page"]: currentPage + 1 }}
               />
             </PaginationItem>
           </PaginationContent>
