@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect } from "react"
+import { useCallback, useEffect } from "react"
 import { toast } from "sonner"
 import { Edit, Timer, TimerOff, X } from "lucide-react"
 import { useIsMutating } from "@tanstack/react-query"
@@ -60,18 +60,22 @@ export function OrderActionButtons({ order }: OrderActionButtonsProps) {
 
   const canUnHold = order.status === "on hold"
 
-  useEffect(() => {
-    if (mode === "cart") {
-      removeAllProducts()
-    }
+  const onSuccess = useCallback(() => {
+    triggerConfetti()
+    if (mode === "cart") removeAllProducts()
+    toast.success("Order placed successfully", { id: "order-success" })
+    const url = modifyUrl({ ["success"]: null, ["mode"]: null })
+    router.push(url, { scroll: false })
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mode])
+
+  useEffect(() => {
     if (success === "1") {
-      triggerConfetti()
-      toast.success("Order placed successfully", { id: "order-success" })
-      const url = modifyUrl({ ["success"]: null, ["mode"]: null })
-      router.push(url, { scroll: false })
+      onSuccess()
     }
-  }, [success, router, modifyUrl, mode, removeAllProducts])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [success])
 
   if (order.status === "cancelled" || order.status === "delivered") {
     return null

@@ -1,18 +1,20 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useAction } from "next-safe-action/hooks"
 import { useParams } from "next/navigation"
+import { useQuery } from "@tanstack/react-query"
 
-import type { Review } from "@/db/schema"
 import { Button } from "@/components/ui/button"
 import { ReviewSchema, reviewSchema } from "@/utils/validations/review"
 import { Textarea } from "@/components/ui/textarea"
 import { EditableRatingStars } from "../editable-rating-stars"
 import { parseError } from "@/utils/error"
 import { createReview, updateReview } from "@/actions/review"
+import { useInvalidateQueries } from "@/hooks/use-invalidate-queries"
+import { canReviewProduct } from "@/queries/review"
 import {
   Modal,
   ModalBody,
@@ -36,14 +38,24 @@ import {
 } from "@/components/ui/form"
 
 type ReviewModalProps = {
-  canReview: boolean
-  initialData: Review | null
+  isLoggedIn: boolean
 }
 
-export function ReviewModal({ initialData, canReview }: ReviewModalProps) {
+export function ReviewModal({ isLoggedIn }: ReviewModalProps) {
   const { productId }: { productId: string } = useParams()
+  const { invalidate } = useInvalidateQueries()
 
   const [open, setOpen] = useState(false)
+
+  const { data, isFetching } = useQuery({
+    queryKey: ["can-review", productId],
+    queryFn: async () => await canReviewProduct(productId),
+  })
+
+  const { canReview, prevReview } = data ?? {
+    canReview: false,
+    prevReview: null,
+  }
 
   function handleOpenChange(open: boolean) {
     setOpen(open)
@@ -54,7 +66,7 @@ export function ReviewModal({ initialData, canReview }: ReviewModalProps) {
 
   const form = useForm<ReviewSchema>({
     resolver: zodResolver(reviewSchema),
-    defaultValues: initialData ?? {
+    defaultValues: prevReview ?? {
       rating: 5,
       description: "",
     },
@@ -67,6 +79,7 @@ export function ReviewModal({ initialData, canReview }: ReviewModalProps) {
     },
     onSuccess() {
       handleOpenChange(false)
+      invalidate(["product-reviews", "can-review"])
     },
   })
 
@@ -77,38 +90,49 @@ export function ReviewModal({ initialData, canReview }: ReviewModalProps) {
     },
     onSuccess() {
       handleOpenChange(false)
+      invalidate(["product-reviews", "can-review"])
     },
   })
 
   const isPending = isCreating || isUpdating
 
-  const onSubmit = form.handleSubmit(async (values) => {
-    if (initialData) {
-      update({ ...values, productId, reviewId: initialData.id })
+  const onSubmit = form.handleSubmit((values) => {
+    if (prevReview) {
+      update({ ...values, productId, reviewId: prevReview.id })
     } else {
       create({ ...values, productId })
     }
   })
 
+  const buttonLabel = useMemo(() => {
+    if (!isLoggedIn) {
+      return "Login to review"
+    } else if (isFetching) {
+      return "Loading..."
+    } else if (!!prevReview) {
+      return "Edit your review"
+    } else if (canReview) {
+      return "Write a review"
+    } else {
+      return "Order to review"
+    }
+  }, [isLoggedIn, isFetching, prevReview, canReview])
+
   useEffect(() => {
-    form.setValue("rating", initialData?.rating ?? 5)
-    form.setValue("description", initialData?.description ?? "")
-  }, [initialData, form])
+    form.setValue("rating", prevReview?.rating ?? 5)
+    form.setValue("description", prevReview?.description ?? "")
+  }, [prevReview, form])
 
   return (
     <Modal open={open} onOpenChange={handleOpenChange}>
       <ModalTrigger asChild>
         <Button disabled={!canReview} className="h-12 rounded-full text-base">
-          {!!initialData
-            ? "Edit your review"
-            : canReview
-              ? "Write a review"
-              : "Order to review"}
+          {buttonLabel}
         </Button>
       </ModalTrigger>
       <ModalContent>
         <ModalHeader>
-          <ModalTitle>{!!initialData ? "Edit" : "Post"} Review</ModalTitle>
+          <ModalTitle>{!!prevReview ? "Edit" : "Post"} Review</ModalTitle>
           <ModalDescription>
             Kindly provide your feedback on the product you&apos;ve purchased
           </ModalDescription>
@@ -164,7 +188,7 @@ export function ReviewModal({ initialData, canReview }: ReviewModalProps) {
             </Button>
           </ModalClose>
           <Button type="submit" form="review-form" loading={isPending}>
-            {initialData ? "Update changes" : "Post"}
+            {prevReview ? "Update changes" : "Post"}
           </Button>
         </ModalFooter>
       </ModalContent>

@@ -3,7 +3,6 @@ import Link from "next/link"
 import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react"
 
 import { cn } from "@/utils"
-import { useModifiedUrl } from "@/hooks/use-modified-url"
 import { ButtonProps, buttonVariants } from "@/components/ui/button"
 
 const Pagination = ({ className, ...props }: React.ComponentProps<"nav">) => (
@@ -39,8 +38,7 @@ PaginationItem.displayName = "PaginationItem"
 type PaginationLinkProps = {
   isActive?: boolean
 } & Pick<ButtonProps, "size"> &
-  Omit<React.ComponentProps<typeof Link>, "href"> & {
-    pageParam: Record<string, string | number>
+  React.ComponentProps<typeof Link> & {
     disabled?: boolean
   }
 
@@ -48,14 +46,10 @@ const PaginationLink = ({
   className,
   isActive,
   size = "icon",
-  pageParam,
   ...props
 }: PaginationLinkProps) => {
-  const { modifyUrl } = useModifiedUrl()
-
   return (
     <Link
-      href={modifyUrl(pageParam)}
       aria-current={isActive ? "page" : undefined}
       className={cn(
         buttonVariants({

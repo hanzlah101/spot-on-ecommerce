@@ -5,7 +5,7 @@ export default function Loading() {
     <div className="space-y-6 py-8">
       <div>
         <Skeleton className="h-5 w-[280px] rounded" />
-        <Skeleton className="h-3.5 w-[180px] rounded" />
+        <Skeleton className="mt-2 h-3.5 w-[180px] rounded" />
       </div>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">

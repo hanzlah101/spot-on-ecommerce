@@ -48,7 +48,7 @@ export function VariantsTable({ variantsPromise }: VariantsTableProps) {
     data: sortedData,
     columns,
     filterFields,
-    defaultSort: "updatedAt.desc",
+    defaultSort: "createdAt.desc",
     withPagination: false,
   })
 

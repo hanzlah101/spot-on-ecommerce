@@ -54,8 +54,8 @@ export default function Editor({
         className={cn(
           "relative w-full rounded-md",
           disabled && "pointer-events-none opacity-50",
-          editable &&
-            "min-h-[500px] border border-input bg-input/50 sm:mb-[calc(20vh)]",
+          editable && "border border-input bg-input/50 sm:mb-[calc(20vh)]",
+          !editable && "min-h-[500px]",
         )}
         editorProps={{
           handleDOMEvents: {

@@ -1,9 +1,9 @@
 "use server"
 
 import { z } from "zod"
-import { revalidateTag, unstable_noStore as noStore } from "next/cache"
 import { eq, inArray } from "drizzle-orm"
 import { createId } from "@paralleldrive/cuid2"
+import { revalidateTag, unstable_noStore as noStore } from "next/cache"
 
 import { db } from "@/db"
 import { variantValues, variants } from "@/db/schema"
@@ -15,11 +15,9 @@ import { updateManyWithDifferentValues } from "@/utils/helpers"
 export const createVariant = adminAction
   .schema(variantSchema)
   .action(async ({ parsedInput: { values, ...data } }) => {
-    noStore()
+    const variantId = createId()
 
     await db.transaction(async (tx) => {
-      const variantId = createId()
-
       await tx
         .insert(variants)
         .values({ id: variantId, ...data })
@@ -39,6 +37,7 @@ export const createVariant = adminAction
         .values(
           values.map((val) => ({
             ...val,
+            id: createId(),
             variantId,
           })),
         )

@@ -1,18 +1,22 @@
 "use client"
 
 import { toast } from "sonner"
-import { use } from "react"
+import { type ReactNode } from "react"
 import { format, isEqual } from "date-fns"
 import { Trash2 } from "lucide-react"
+import { useQuery } from "@tanstack/react-query"
+import { useParams, useSearchParams } from "next/navigation"
 
-import type { canReviewProduct, getProductReviews } from "@/queries/review"
+import { getProductReviews } from "@/queries/review"
 import { deleteReview } from "@/actions/review"
 import { RatingStarsPreview } from "../rating-stars-preview"
 import { Progress } from "@/components/ui/progress"
 import { ReviewModal } from "./review-modal"
 import { useConfirmModal } from "@/stores/use-confirm-modal"
-import { usePagination } from "@/hooks/use-pagination"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { PaginationWithLinks } from "@/components/pagination-with-links"
+import { Skeleton } from "@/components/ui/skeleton"
+import { useInvalidateQueries } from "@/hooks/use-invalidate-queries"
 import {
   Card,
   CardContent,
@@ -27,36 +31,31 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination"
-
 type ProductReviewsProps = {
   userId?: string
   productRating: number
-  reviewsPromise: ReturnType<typeof getProductReviews>
-  canReviewPromise: ReturnType<typeof canReviewProduct>
 }
 
-export function ProductReviews({
-  reviewsPromise,
-  productRating,
-  canReviewPromise,
-  userId,
-}: ProductReviewsProps) {
-  const { total, reviewCounts, data, pageCount } = use(reviewsPromise)
-  const { canReview, prevReview } = use(canReviewPromise)
+export function ProductReviews({ productRating, userId }: ProductReviewsProps) {
   const { onOpen: onDelete } = useConfirmModal()
-  const { currentPage, pages } = usePagination({
-    pageCount,
-    pageParamName: "review_page",
+
+  const { invalidate } = useInvalidateQueries()
+
+  const { productId }: { productId: string } = useParams()
+  const searchParams = useSearchParams()
+  const page = Number(searchParams.get("review_page") ?? "1")
+
+  const { data: response, isFetching } = useQuery({
+    queryKey: ["product-reviews", productId, page],
+    queryFn: async () => await getProductReviews(page, productId),
   })
+
+  const { total, pageCount, reviewCounts, data } = response ?? {
+    total: 0,
+    pageCount: 0,
+    reviewCounts: [],
+    data: [],
+  }
 
   const allRatings = [5, 4, 3, 2, 1]
 
@@ -64,6 +63,18 @@ export function ProductReviews({
     rating,
     count: reviewCounts.find((r) => r.rating === rating)?.count ?? 0,
   }))
+
+  if (isFetching) {
+    return (
+      <ProductReviewsSkeleton>
+        <PaginationWithLinks
+          shouldScroll={false}
+          pageCount={pageCount}
+          pageSearchParam="review_page"
+        />
+      </ProductReviewsSkeleton>
+    )
+  }
 
   return (
     <Card>
@@ -106,7 +117,7 @@ export function ProductReviews({
               />
               <p className="text-lg font-semibold">{total} Ratings</p>
             </div>
-            <ReviewModal canReview={canReview} initialData={prevReview} />
+            <ReviewModal isLoggedIn={!!userId} />
           </div>
         </div>
 
@@ -131,7 +142,10 @@ export function ProductReviews({
                                   reviewId: review.id,
                                   productId: review.productId,
                                 }),
-                              onSuccess: () => toast.success("Review Deleted"),
+                              onSuccess: () => {
+                                toast.success("Review Deleted")
+                                invalidate(["can-review", "product-reviews"])
+                              },
                             })
                           }
                         >
@@ -173,42 +187,53 @@ export function ProductReviews({
         )}
 
         {pageCount > 1 ? (
-          <Pagination className="mt-8">
-            <PaginationContent>
-              <PaginationItem>
-                <PaginationPrevious
-                  scroll={false}
-                  disabled={currentPage === 1}
-                  pageParam={{ ["review_page"]: currentPage - 1 }}
-                />
-              </PaginationItem>
-
-              {pages.map((page, index) => (
-                <PaginationItem key={index}>
-                  {page === "..." ? (
-                    <PaginationEllipsis />
-                  ) : (
-                    <PaginationLink
-                      scroll={false}
-                      isActive={page === currentPage}
-                      pageParam={{ ["review_page"]: page }}
-                    >
-                      {page}
-                    </PaginationLink>
-                  )}
-                </PaginationItem>
-              ))}
-
-              <PaginationItem>
-                <PaginationNext
-                  scroll={false}
-                  disabled={currentPage === pageCount}
-                  pageParam={{ ["review_page"]: currentPage + 1 }}
-                />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
+          <PaginationWithLinks
+            shouldScroll={false}
+            pageCount={pageCount}
+            pageSearchParam="review_page"
+          />
         ) : null}
+      </CardContent>
+    </Card>
+  )
+}
+
+export function ProductReviewsSkeleton({ children }: { children?: ReactNode }) {
+  return (
+    <Card>
+      <CardHeader>
+        <Skeleton className="h-7 w-72 rounded" />
+        <Skeleton className="mt-2 h-3.5 w-48 rounded" />
+      </CardHeader>
+      <CardContent>
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <Skeleton className="h-52 w-full" />
+          <Skeleton className="h-52 w-full" />
+        </div>
+
+        <div className="mt-8 grid w-full grid-cols-1 gap-5 border-t pt-8 md:grid-cols-2">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <Card key={i}>
+              <CardContent className="space-y-3 pt-6">
+                <Skeleton className="h-6 w-48 rounded" />
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-x-2">
+                    <Skeleton className="size-10 rounded-full" />
+                    <Skeleton className="h-4 w-20 rounded" />
+                  </div>
+                  <Skeleton className="h-3 w-20 rounded" />
+                </div>
+
+                <div className="border-l-2 border-foreground/10 pl-6">
+                  <Skeleton className="h-3.5 w-full rounded" />
+                  <Skeleton className="mt-1.5 h-3.5 w-2/3 rounded" />
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
+        {children}
       </CardContent>
     </Card>
   )

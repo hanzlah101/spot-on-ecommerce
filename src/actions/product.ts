@@ -12,8 +12,9 @@ import { isEqual } from "@/utils"
 import { generateEmbedding } from "@/utils/embedding"
 import { ActionError } from "@/utils/error"
 import { updateManyWithDifferentValues } from "@/utils/helpers"
-
+import { isFavouriteProduct } from "@/queries/product"
 import {
+  type Product,
   combinationVariantValues,
   favouriteProducts,
   productVariantCombinations,
@@ -32,7 +33,6 @@ import {
   deleteProductsSchema,
   updateProductLabelStatusSchema,
 } from "@/utils/validations/product"
-import { isFavouriteProduct } from "@/queries/product"
 
 export const createProduct = adminAction
   .schema(productDetailsSchema)
@@ -517,7 +517,10 @@ export const publishProduct = adminAction
       }
     }
 
-    await db.update(products).set(input).where(eq(products.id, productId))
+    await db
+      .update(products)
+      .set({ ...input, labelledAt: getLabelledAt(input.label) })
+      .where(eq(products.id, productId))
 
     revalidateTag("featured-products")
     revalidatePath("/dashboard/products")
@@ -531,7 +534,7 @@ export const updateProductsStatusLabel = adminAction
   .action(async ({ parsedInput: { ids, label, status } }) => {
     await db
       .update(products)
-      .set({ label, status })
+      .set({ label, status, labelledAt: getLabelledAt(label) })
       .where(inArray(products.id, ids))
 
     revalidateTag("featured-products")
@@ -545,7 +548,10 @@ export const updateProductsStatusLabel = adminAction
 export const updateProductStatusLabel = adminAction
   .schema(updateProductLabelStatusSchema)
   .action(async ({ parsedInput: { id, label, status } }) => {
-    await db.update(products).set({ label, status }).where(eq(products.id, id))
+    await db
+      .update(products)
+      .set({ label, status, labelledAt: getLabelledAt(label) })
+      .where(eq(products.id, id))
 
     revalidateTag("featured-products")
     revalidatePath("/dashboard/products")
@@ -588,3 +594,9 @@ export const favouriteProduct = authenticatedAction
 
     return isFavourite
   })
+
+function getLabelledAt(label?: Product["label"]) {
+  if (!label) return undefined
+  if (label === "none") return null
+  return new Date()
+}

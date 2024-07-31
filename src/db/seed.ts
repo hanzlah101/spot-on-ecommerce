@@ -23,14 +23,14 @@ const categoriesData = [
   {
     id: createId(),
     name: "Men",
-    description: "Premium products tailored for men.",
+    description: "Premium products for men.",
     createdAt: getRandomDate(),
     updatedAt: getRandomDate(),
     subcategories: [
       {
         id: createId(),
         name: "Shirts",
-        description: "Versatile shirts for any occasion.",
+        description: "Versatile shirts.",
         createdAt: getRandomDate(),
         updatedAt: getRandomDate(),
         slug: "mens-shirts",
@@ -38,7 +38,7 @@ const categoriesData = [
       {
         id: createId(),
         name: "Shoes",
-        description: "High-quality footwear for various styles.",
+        description: "High-quality footwear.",
         createdAt: getRandomDate(),
         updatedAt: getRandomDate(),
         slug: "mens-shoes",
@@ -46,7 +46,7 @@ const categoriesData = [
       {
         id: createId(),
         name: "Watches",
-        description: "Stylish watches to complement your look.",
+        description: "Stylish watches.",
         createdAt: getRandomDate(),
         updatedAt: getRandomDate(),
         slug: "mens-watches",
@@ -56,30 +56,14 @@ const categoriesData = [
   {
     id: createId(),
     name: "Women",
-    description: "Sophisticated products curated for women.",
+    description: "Curated products for women.",
     createdAt: getRandomDate(),
     updatedAt: getRandomDate(),
     subcategories: [
       {
         id: createId(),
-        name: "Beauty",
-        description: "Exceptional beauty and skincare products.",
-        createdAt: getRandomDate(),
-        updatedAt: getRandomDate(),
-        slug: "beauty",
-      },
-      {
-        id: createId(),
-        name: "Bags",
-        description: "Elegant handbags from renowned brands.",
-        createdAt: getRandomDate(),
-        updatedAt: getRandomDate(),
-        slug: "womens-bags",
-      },
-      {
-        id: createId(),
         name: "Dresses",
-        description: "Designer dresses for every event.",
+        description: "Designer dresses.",
         createdAt: getRandomDate(),
         updatedAt: getRandomDate(),
         slug: "womens-dresses",
@@ -87,40 +71,24 @@ const categoriesData = [
       {
         id: createId(),
         name: "Jewellery",
-        description: "Exquisite jewellery for every occasion.",
+        description: "Exquisite jewellery.",
         createdAt: getRandomDate(),
         updatedAt: getRandomDate(),
         slug: "womens-jewellery",
-      },
-      {
-        id: createId(),
-        name: "Shoes",
-        description: "Fashionable shoes for diverse styles.",
-        createdAt: getRandomDate(),
-        updatedAt: getRandomDate(),
-        slug: "womens-shoes",
-      },
-      {
-        id: createId(),
-        name: "Watches",
-        description: "Chic watches to enhance your elegance.",
-        createdAt: getRandomDate(),
-        updatedAt: getRandomDate(),
-        slug: "womens-watches",
       },
     ],
   },
   {
     id: createId(),
     name: "Electronics",
-    description: "Cutting-edge electronics for modern living.",
+    description: "Modern electronics.",
     createdAt: getRandomDate(),
     updatedAt: getRandomDate(),
     subcategories: [
       {
         id: createId(),
         name: "Laptops",
-        description: "High-performance laptops for all needs.",
+        description: "High-performance laptops.",
         createdAt: getRandomDate(),
         updatedAt: getRandomDate(),
         slug: "laptops",
@@ -128,75 +96,35 @@ const categoriesData = [
       {
         id: createId(),
         name: "Smartphones",
-        description: "Latest smartphones with advanced features.",
+        description: "Advanced smartphones.",
         createdAt: getRandomDate(),
         updatedAt: getRandomDate(),
         slug: "smartphones",
-      },
-      {
-        id: createId(),
-        name: "Tablets",
-        description: "Innovative tablets for productivity and entertainment.",
-        createdAt: getRandomDate(),
-        updatedAt: getRandomDate(),
-        slug: "tablets",
-      },
-      {
-        id: createId(),
-        name: "Vehicle",
-        description: "Durable and reliable vehicles for every journey.",
-        createdAt: getRandomDate(),
-        updatedAt: getRandomDate(),
-        slug: "vehicle",
-      },
-      {
-        id: createId(),
-        name: "Motorcycle",
-        description: "Performance motorcycles for the adventurous.",
-        createdAt: getRandomDate(),
-        updatedAt: getRandomDate(),
-        slug: "motorcycle",
       },
     ],
   },
   {
     id: createId(),
     name: "Accessories",
-    description: "Essential accessories to complement your lifestyle.",
+    description: "Essential accessories.",
     createdAt: getRandomDate(),
     updatedAt: getRandomDate(),
     subcategories: [
       {
         id: createId(),
         name: "Fragrances",
-        description: "Premium fragrances to leave a lasting impression.",
+        description: "Premium fragrances.",
         createdAt: getRandomDate(),
         updatedAt: getRandomDate(),
         slug: "fragrances",
       },
       {
         id: createId(),
-        name: "Home decoration",
-        description: "Elegant décor items to enhance your living space.",
-        createdAt: getRandomDate(),
-        updatedAt: getRandomDate(),
-        slug: "home-decoration",
-      },
-      {
-        id: createId(),
         name: "Mobile accessories",
-        description: "Essential accessories for your mobile devices.",
+        description: "Mobile device accessories.",
         createdAt: getRandomDate(),
         updatedAt: getRandomDate(),
         slug: "mobile-accessories",
-      },
-      {
-        id: createId(),
-        name: "Sports accessories",
-        description: "High-quality accessories for sports enthusiasts.",
-        createdAt: getRandomDate(),
-        updatedAt: getRandomDate(),
-        slug: "sports-accessories",
       },
     ],
   },
@@ -282,12 +210,12 @@ const hashedPassword =
   "$argon2id$v=19$m=19456,t=2,p=1$BoYTcQ59BlCys117eUfFag$wTYm8NHRdNKmtvMaoGFAdaJfxkgta4CCuSEx9lY2yh8"
 
 const usersData: (typeof users.$inferInsert)[] = Array.from({
-  length: 50,
+  length: 20,
 }).map((_, index) => ({
   id: createId(),
   name: "User " + (index + 1),
   email: `user${index + 1}@gmail.com`,
-  role: index + 1 >= 25 ? "moderator" : "customer",
+  role: index + 1 >= 10 ? "moderator" : "customer",
   hashedPassword,
   emailVerified: new Date(),
   createdAt: getRandomDate(),
@@ -297,8 +225,6 @@ const usersData: (typeof users.$inferInsert)[] = Array.from({
 async function seedUsers(tx: TX) {
   await tx.insert(users).values(usersData)
 }
-
-const productId = "j0uq9kmlge8609zpeetxpais"
 
 async function seedReviews(
   tx: TX,
@@ -346,18 +272,21 @@ async function seedReviews(
   })
 
   await tx.insert(reviews).values(reviewsData)
+  const p = await tx.select({ id: products.id }).from(products)
 
-  const [avgRating] = await tx
-    .select({ averageRating: avg(reviews.rating) })
-    .from(reviews)
-    .where(eq(reviews.productId, productId))
+  for (const product of p) {
+    const [avgRating] = await tx
+      .select({ averageRating: avg(reviews.rating) })
+      .from(reviews)
+      .where(eq(reviews.productId, product.id))
 
-  const newRating = parseFloat(avgRating?.averageRating ?? "0").toFixed(1)
+    const newRating = parseFloat(avgRating?.averageRating ?? "0").toFixed(1)
 
-  await tx
-    .update(products)
-    .set({ rating: Number(newRating) })
-    .where(eq(products.id, productId))
+    await tx
+      .update(products)
+      .set({ rating: parseFloat(newRating) })
+      .where(eq(products.id, product.id))
+  }
 }
 
 // ;(async function () {

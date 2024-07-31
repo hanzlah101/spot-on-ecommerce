@@ -9,21 +9,11 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { searchProducts } from "@/queries/product"
 import type { Category, Subcategory } from "@/db/schema"
 import { SearchProductsSchema } from "@/utils/validations/product"
-import { usePagination } from "@/hooks/use-pagination"
+import { PaginationWithLinks } from "@/components/pagination-with-links"
 import {
   ProductReel,
   ProductReelSkeleton,
 } from "../../_components/product-reel"
-
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination"
 
 type SearchProductsResultProps = {
   category: Category | null
@@ -48,8 +38,6 @@ export function SearchProductsResult({
     total,
     pageCount,
   } = data ?? { data: [], pageCount: 0, total: 0 }
-
-  const { currentPage, pages } = usePagination({ pageCount })
 
   const searchLabel = useMemo(() => {
     if (query) {
@@ -129,40 +117,7 @@ export function SearchProductsResult({
         ))}
       </div>
 
-      {pageCount > 1 ? (
-        <Pagination className="w-full pt-12">
-          <PaginationContent>
-            <PaginationItem>
-              <PaginationPrevious
-                disabled={currentPage === 1}
-                pageParam={{ ["page"]: currentPage - 1 }}
-              />
-            </PaginationItem>
-
-            {pages.map((page, index) => (
-              <PaginationItem key={index}>
-                {page === "..." ? (
-                  <PaginationEllipsis />
-                ) : (
-                  <PaginationLink
-                    isActive={page === currentPage}
-                    pageParam={{ ["page"]: page }}
-                  >
-                    {page}
-                  </PaginationLink>
-                )}
-              </PaginationItem>
-            ))}
-
-            <PaginationItem>
-              <PaginationNext
-                disabled={currentPage === pageCount}
-                pageParam={{ ["page"]: currentPage + 1 }}
-              />
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
-      ) : null}
+      {pageCount > 1 ? <PaginationWithLinks pageCount={pageCount} /> : null}
     </div>
   )
 }

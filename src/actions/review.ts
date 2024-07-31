@@ -1,7 +1,6 @@
 "use server"
 
 import { z } from "zod"
-import { revalidatePath } from "next/cache"
 import { and, avg, eq } from "drizzle-orm"
 
 import { db } from "@/db"
@@ -54,8 +53,6 @@ export const createReview = authenticatedAction
 
       await updateProductRating(tx, productId)
     })
-
-    revalidatePath(`/product/${productId}`)
   })
 
 export const updateReview = authenticatedAction
@@ -78,8 +75,6 @@ export const updateReview = authenticatedAction
 
         await updateProductRating(tx, productId)
       })
-
-      revalidatePath(`/product/${productId}`)
     },
   )
 
@@ -98,6 +93,4 @@ export const deleteReview = authenticatedAction
 
       await updateProductRating(tx, productId)
     })
-
-    revalidatePath(`/product/${productId}`)
   })

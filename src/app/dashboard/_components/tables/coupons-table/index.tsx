@@ -57,7 +57,7 @@ export function CouponsTable({ couponsPromise }: CouponsTableProps) {
     data: sortedData,
     columns,
     filterFields,
-    defaultSort: "updatedAt.desc",
+    defaultSort: "createdAt.desc",
     withPagination: false,
   })
 

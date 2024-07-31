@@ -65,7 +65,7 @@ export function ProductsTable({ productsPromise }: ProductsTableProps) {
     pageCount,
     filterFields,
     defaultPerPage: 10,
-    defaultSort: "updatedAt.desc",
+    defaultSort: "createdAt.desc",
   })
 
   return (

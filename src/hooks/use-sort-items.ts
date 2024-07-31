@@ -7,7 +7,7 @@ type SortableItem = {
 
 export function useSortItems<T extends SortableItem>(
   items: T[],
-  defaultSort: string = "updatedAt.desc",
+  defaultSort: string = "createdAt.desc",
 ) {
   const searchParams = useSearchParams()
   const sortParam = searchParams.get("sort") || defaultSort

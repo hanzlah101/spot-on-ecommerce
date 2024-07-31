@@ -118,6 +118,7 @@ export async function getFeaturedProducts() {
           eq(products.label, "featured"),
           eq(products.status, "active"),
         ),
+        orderBy: desc(products.labelledAt),
         columns: {
           id: true,
           title: true,

@@ -163,6 +163,7 @@ export const products = pgTable(
     rating: real("rating").notNull().default(0),
     status: productStatusEnum("product_status").notNull().default("draft"),
     label: productLabelEnum("product_label").notNull().default("none"),
+    labelledAt: timestamp("labelled_at"),
     tags: text("tags")
       .array()
       .notNull()
