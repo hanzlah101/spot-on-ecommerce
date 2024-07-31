@@ -4,7 +4,7 @@ import { toast } from "sonner"
 import { type ReactNode } from "react"
 import { format, isEqual } from "date-fns"
 import { Trash2 } from "lucide-react"
-import { useQuery } from "@tanstack/react-query"
+import { useQuery, keepPreviousData } from "@tanstack/react-query"
 import { useParams, useSearchParams } from "next/navigation"
 
 import { getProductReviews } from "@/queries/review"
@@ -48,6 +48,7 @@ export function ProductReviews({ productRating, userId }: ProductReviewsProps) {
   const { data: response, isFetching } = useQuery({
     queryKey: ["product-reviews", productId, page],
     queryFn: async () => await getProductReviews(page, productId),
+    placeholderData: keepPreviousData,
   })
 
   const { total, pageCount, reviewCounts, data } = response ?? {
